@@ -1,0 +1,7 @@
+fastapi>=0.115.0
+uvicorn[standard]
+sqlalchemy[asyncio]>=2.0.35
+asyncpg
+pydantic-settings
+python-dotenv
+telegram-init-data>=1.0.2
