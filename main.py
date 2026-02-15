@@ -1,13 +1,15 @@
 from fastapi import FastAPI, Depends
 import uvicorn
 from datetime import datetime, timedelta
-
+import os
 from routers.tasks import router as tasks_router
+from tg import router as tg_router
 from database import engine, Base, get_db
 from register import TelegramUser, get_current_user
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
 from models import DBTask, Task
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI(
     title="Telegram Task Mini App",
@@ -16,6 +18,7 @@ app = FastAPI(
 )
 
 app.include_router(tasks_router, prefix="/tasks", tags=["tasks"])
+app.include_router(tg_router, prefix="/tg", tags=["telegram"])
 
 import asyncio
 async def init_db():
@@ -33,7 +36,10 @@ async def check_reminders(current_user: TelegramUser = Depends(get_current_user)
     ).where(DBTask.due_date < datetime.utcnow() + timedelta(hours=1))
     result = await db.execute(stmt)
     db_tasks = result.scalars().all()
-    return {"reminders": [Task.from_attributes(t) for t in db_tasks]}
+    return {"reminders": [Task.model_validate(t) for t in db_tasks]}
+
+os.makedirs("static/avatars", exist_ok=True)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

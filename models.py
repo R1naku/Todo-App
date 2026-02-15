@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import List, Optional
-from pydantic import BaseModel
-from sqlalchemy import Column, Integer, String, DateTime, ARRAY
+from pydantic import BaseModel, ConfigDict
+from sqlalchemy import Column, Integer, String, DateTime, ARRAY, func
+from sqlalchemy.orm import Mapped, mapped_column
 from database import Base
 
 class DBTask(Base):
@@ -43,8 +44,19 @@ class Task(TaskBase):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class ShareTask(BaseModel):
     user_id: int
+
+class TelegramUser(Base):
+    __tablename__ = "telegram_users"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    username: Mapped[str | None] = mapped_column(String(100), unique=True)
+    first_name: Mapped[str] = mapped_column(String(100))
+    last_name: Mapped[str | None] = mapped_column(String(100))
+    avatar_url: Mapped[str | None] = mapped_column(String(500))
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, server_default=func.now(), onupdate=func.now()
+    )
