@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список дел</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        input, button { margin: 5px; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin: 10px 0; border: 1px solid #ccc; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Список дел</h1>
+    <input id="title" placeholder="Название задачи" required>
+    <input id="description" placeholder="Описание">
+    <input id="due_date" type="datetime-local" placeholder="Срок">
+    <button onclick="createTask()">Создать задачу</button>
+    <ul id="taskList"></ul>
+
+    <script>
+        const apiUrl = '/tasks';  // Относительный путь, если frontend служится с того же домена
+        const initData = window.Telegram.WebApp.initData;
+
+        async function fetchTasks() {
+            const response = await fetch(apiUrl, {
+                headers: { 'X-Telegram-Init-Data': initData }
+            });
+            const tasks = await response.json();
+            const list = document.getElementById('taskList');
+            list.innerHTML = '';
+            tasks.forEach(task => {
+                const li = document.createElement('li');
+                li.innerHTML = `<strong>${task.title}</strong><br>${task.description || ''}<br>Срок: ${task.due_date || 'Нет'}<br>Приоритет: ${task.priority}`;
+                const shareBtn = document.createElement('button');
+                shareBtn.textContent = 'Поделиться';
+                shareBtn.onclick = () => shareTask(task.id);
+                li.appendChild(shareBtn);
+                list.appendChild(li);
+            });
+        }
+
+        async function createTask() {
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const due_date = document.getElementById('due_date').value;
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Telegram-Init-Data': initData
+                },
+                body: JSON.stringify({ title, description, due_date })
+            });
+            if (response.ok) {
+                fetchTasks();
+                document.getElementById('title').value = '';
+                document.getElementById('description').value = '';
+                document.getElementById('due_date').value = '';
+            }
+        }
+
+        async function shareTask(taskId) {
+            const userId = prompt('ID пользователя для шаринга:');
+            await fetch(`${apiUrl}/${taskId}/share`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Telegram-Init-Data': initData
+                },
+                body: JSON.stringify({ user_id: parseInt(userId) })
+            });
+            fetchTasks();
+        }
+
+        window.Telegram.WebApp.ready();
+        fetchTasks();  // Загрузка задач при старте
+    </script>
+</body>
+</html>
