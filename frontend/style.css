@@ -1,0 +1,176 @@
+@import url('https://fonts.googleapis.com/css2?family=Anonymous+Pro:wght@400;700&display=swap');
+:root {
+  --bg: #0a0e1a;
+  --card-bg: #111727;
+  --text: #e0e0ff;
+  --accent: #a78bfa;
+  --border: #2a3349;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Anonymous Pro", monospace;
+  font-weight: 600;
+  font-style: normal;
+}
+
+body {
+  margin-top: 75px;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  min-width: 370px;
+  padding: 16px 12px 80px;
+  background: linear-gradient(to bottom, #0a0e1a, #26296B);
+}
+
+h1 {
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin: 0 0 24px 4px;
+  color: #c4c4ff;
+  text-shadow: 0 2px 12px rgba(100, 80, 255, 0.25);
+}
+
+.section-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 32px 0 16px;
+  color: #b0b0ff;
+}
+
+.plan-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+  position: relative;
+}
+
+.plan-header {
+  background: linear-gradient(135deg, #1a2340, #0f1628);
+  padding: 12px 16px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  border-bottom: 1px solid #1f2a45;
+  color: #d0d0ff;
+}
+
+.plan-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.05rem;
+  color: #d0d0ff;
+}
+
+.checkbox {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #5a6aff;
+  border-radius: 6px;
+  flex-shrink: 0;
+  position: relative;
+  cursor: pointer;
+}
+
+.checkbox.checked::after {
+  content: "✓";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a78bfa;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.plan-image {
+  position: absolute;
+  inset: 0;                     /* занимает всю карточку */
+  width: 100%;
+  height: 100%;
+  object-fit: cover;            /* заполняет без искажений, обрезает лишнее */
+  object-position: center center;  /* ← ключевой фикс: строго центр фото */
+  opacity: 0.18;
+  pointer-events: none;
+  filter: brightness(0.7);
+  z-index: 0;
+}
+
+.plan-content > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Нижняя панель навигации */
+.bottom-nav {
+  position: fixed;
+  bottom: 16px;                    /* отступ от низа экрана (можно 12–20px) */
+  left: 50%;                       /* ← ключевой момент для центрирования */
+  transform: translateX(-50%);     /* ← смещает ровно на половину ширины влево */
+  width: 360px;                    /* фиксированная ширина панели — подбери под свои иконки (300–360px) */
+  max-width: 90%;                  /* не выходит за экран на узких устройствах */
+  height: 75px;
+  background: rgba(15, 20, 37, 0.92);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(90, 106, 255, 0.18);
+  border-radius: 32px;             /* закруглённые углы, как на скрине */
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;   /* равные промежутки между кнопками + по бокам */
+  gap: 40px;                       /* расстояние между кнопками — подбери 30–60px */
+  padding: 0 20px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.6);
+  z-index: 1000;                   /* чтобы была поверх контента */
+}
+
+/* Кнопки остаются почти такими же, но подогнал под новую ширину */
+.nav-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: rgba(30, 40, 70, 0.6);
+  border: 1px solid rgba(100, 120, 255, 0.25);
+  color: #a0a0ff;
+  font-size: 1.8rem;               /* если эмодзи */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-btn img {
+  width: 50px;                     /* уменьшил до 36px — выглядит чище в 56px кнопке */
+  height: 50px;
+  object-fit: contain;
+}
+
+/* Подзадачи */
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.task-subitem {
+  margin-left: 34px;
+  font-size: 0.98rem;
+  color: #b0b0ff;
+  margin-top: 4px;
+}
