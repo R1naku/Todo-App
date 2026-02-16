@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
 from models import DBTask, Task
 from fastapi.staticfiles import StaticFiles
+from routers.plans import router as plans_router
 
 app = FastAPI(
     title="Telegram Task Mini App",
@@ -19,6 +20,7 @@ app = FastAPI(
 
 app.include_router(tasks_router, prefix="/tasks", tags=["tasks"])
 app.include_router(tg_router, prefix="/tg", tags=["telegram"])
+app.include_router(plans_router, prefix="/plans", tags=["plans"])
 
 import asyncio
 async def init_db():
