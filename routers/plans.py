@@ -32,9 +32,14 @@ async def list_plans(current_user: TelegramUser = Depends(get_current_user), db:
         or_(DBPlan.owner_id == current_user.id, DBPlan.shared_with.contains([current_user.id]))
     )
     result = await db.execute(stmt)
-    db_plans = result.unique().scalar().all()
+    db_plans = result.unique().scalars().all()
     return [Plan.model_validate(p) for p in db_plans]
 
 @router.get("/{plan_id}", response_model=Plan)
 async def get_plan(plan_id: int, current_user: TelegramUser = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    
+    stmt = select(DBPlan).options(joinedload(DBPlan.tasks).joinedload(DBTask.sub_tasks)).where(DBPlan.id == plan_id)
+    result = await db.execute(stmt)
+    p = result.scalar_one_or_none()
+    if p is None or (p.owner_id != current_user.id and current_user.id not in p.shared_with):
+        raise HTTPException(status_code=404, detail="Plan not found")
+    return Plan.model_validate(p)
