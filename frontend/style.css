@@ -76,28 +76,48 @@ h1 {
   color: #d0d0ff;
 }
 
-.checkbox {
-  width: 22px;
-  height: 22px;
-  border: 2px solid #5a6aff;
-  border-radius: 6px;
-  flex-shrink: 0;
-  position: relative;
-  cursor: pointer;
-}
-
-.checkbox.checked::after {
-  content: "✓";
-  position: absolute;
-  inset: 0;
+.custom-checkbox {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: #a78bfa;
-  font-size: 16px;
-  font-weight: bold;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 1.1rem;
+  color: #d0d0ff;
 }
 
+.checkbox-input {
+  appearance: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 2px solid #C56FFF;
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 500ms ease;
+  flex-shrink: 0;
+}
+
+.checkbox-input::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #C56FFF;
+  transform: scale(0);
+  transform-origin: center;
+  border-radius: 8px;
+  transition: transform 500ms ease;
+  z-index: 0;
+}
+
+.checkbox-input:checked::before {
+  transform: scale(1);
+}
+
+.checkbox-input:checked {
+  border-color: #0a0e1a;             /* рамка становится чёрной (или оставь #C56FFF, если хочешь) */
+}
 .plan-image {
   position: absolute;
   inset: 0;                     /* занимает всю карточку */

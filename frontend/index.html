@@ -12,70 +12,67 @@
 </head>
 
 <body>
-
+  <!-- планы -->
   <h1>планы</h1>
-
   <div class="plan-card">
     <img src="pic/miko.jpg" alt="фон" class="plan-image">
     <div class="plan-header">план на день</div>
     <div class="plan-content">
-      <div class="task-item">
-        <div class="checkbox"></div>
-        сходить к врачу
-      </div>
-      <div class="task-item">
-        <div class="checkbox checked"></div>
-        сходить к врачу
-      </div>
-      <div class="task-item">
-        <div class="checkbox"></div>
-        сходить к врачу
-      </div>
+      <label class="custom-checkbox">
+        <input type="checkbox" class="checkbox-input">
+        <span class="label-text">сходить к врачу</span>
+      </label>
+      <label class="custom-checkbox">
+        <input type="checkbox" class="checkbox-input">
+        <span class="label-text">сходить к врачу</span>
+      </label>
+      <label class="custom-checkbox">
+        <input type="checkbox" class="checkbox-input">
+        <span class="label-text">сходить к врачу</span>
+      </label>
     </div>
   </div>
-
-  <div class="plan-card">
-    <img src="pic/miko.jpg" alt="фон" class="plan-image">
-    <div class="plan-header">план на день</div>
-    <div class="plan-content">
-      <div class="task-item">
-        <div class="checkbox"></div>
-        сходить к врачу
-      </div>
-      <div class="task-item">
-        <div class="checkbox"></div>
-        сходить к врачу
-      </div>
-      <div class="task-item">
-        <div class="checkbox"></div>
-        сходить к врачу
-      </div>
-    </div>
-  </div>
-
+  <!-- задачи-->
   <div class="section-title">задачи</div>
 
   <div class="plan-card">
     <div class="plan-content tasks-list">
-      <div class="task-item">
-        <div class="checkbox"></div>
-        сходить в магазин
-      </div>
+      <label class="custom-checkbox">
+        <input type="checkbox" class="checkbox-input">
+        <span class="label-text">сходить к врачу</span>
+      </label>
       <div class="task-subitem">• хлеб</div>
       <div class="task-subitem">• молоко</div>
       <div class="task-subitem">• колбаса</div>
     </div>
   </div>
+  </div>
+
+  <!--создание заметки-->
+
+  <textarea class="name" name="name_plan" cols="30" rows="2"> </textarea>
+  
+  <input type=datetime-local name="datetime-local" placeholder="дата и время плана/задачи" size=30>
+
+
+
+
+
+
+
+
+
+
 
   <!-- Нижняя панель навигации -->
   <div class="bottom-nav">
     <div class="nav-btn active"><img src="pic/home_negate_w_trans.png" alt="фон">
     </div>
     <div class="nav-btn">
-<img src="pic/add_negate_w_trans.png" alt="фон">
+      <img src="pic/add_negate_w_trans.png" alt="фон">
     </div>
     <div class="nav-btn">
-<img src="pic/profile_negate_w_trans.png" alt="фон">
+      <img src="pic/profile_negate_w_trans.png" alt="фон">
     </div>
   </div>
 
