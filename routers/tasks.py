@@ -10,6 +10,12 @@ from register import get_current_user, TelegramUser
 from models import Task, TaskCreate, TaskUpdate, TaskAnalysis, ShareTask, TaskBase, DBTask
 from database import get_db
 
+# ... остальной код остается таким же
+
+from register import get_current_user, TelegramUser
+from models import Task, TaskCreate, TaskUpdate, TaskAnalysis, ShareTask, TaskBase, DBTask
+from database import get_db
+
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
 def analyze_task(title: str, description: Optional[str]) -> TaskAnalysis:

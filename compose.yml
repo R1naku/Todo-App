@@ -33,8 +33,19 @@ services:
   api:
     image: python:3.12-slim
     command: >
-      bash -c "pip install --no-cache-dir -r requirements.txt &&
-               uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+      bash -c "
+        echo 'Ждём монтирования volume...';
+        sleep 5;
+        if [ -f requirements.txt ]; then
+          echo 'Устанавливаем зависимости...';
+          pip install --no-cache-dir -r requirements.txt;
+        else
+          echo '!!! requirements.txt НЕ НАЙДЕН !!!';
+          ls -la;
+        fi &&
+        echo 'Запускаем приложение...';
+        exec uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+      "
     restart: always
     ports:
       - "8000:8000"
@@ -45,8 +56,8 @@ services:
       db:
         condition: service_healthy
     environment:
-      - DATABASE_URL=postgresql+asyncpg://todo:zxc@db:5432/todo_db
-      - PYTHONUNBUFFERED=1
+      DATABASE_URL: postgresql+asyncpg://todo:zxc@db:5432/todo_db
+      PYTHONUNBUFFERED: "1"
 
   frontend:
     image: nginx:alpine
@@ -60,14 +71,13 @@ services:
 
   ngrok:
     image: ngrok/ngrok:latest
-    restart: unless-stopped
-    environment:
-      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
-    command: http frontend:80
+    command: http api:8000
     ports:
       - "4041:4040"
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
     depends_on:
-      - frontend
+      - api
 
 volumes:
   pgdata:

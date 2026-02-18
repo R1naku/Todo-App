@@ -1,16 +1,18 @@
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware  # ← добавь этот импорт!
 import uvicorn
 from datetime import datetime, timedelta
 import os
+
 from routers.tasks import router as tasks_router
 from tg import router as tg_router
+from routers.plans import router as plans_router
 from database import engine, Base, get_db
 from register import TelegramUser, get_current_user
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
 from models import DBTask, Task
 from fastapi.staticfiles import StaticFiles
-from routers.plans import router as plans_router
 
 app = FastAPI(
     title="Telegram Task Mini App",
@@ -18,11 +20,22 @@ app = FastAPI(
     version="0.1.0"
 )
 
+# ← Добавь CORS сразу здесь, после создания app
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],          # для теста; потом замени на конкретные (ngrok, telegram web app домены)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Подключение роутеров
 app.include_router(tasks_router, prefix="/tasks", tags=["tasks"])
 app.include_router(tg_router, prefix="/tg", tags=["telegram"])
 app.include_router(plans_router, prefix="/plans", tags=["plans"])
 
 import asyncio
+
 async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

@@ -1,81 +1,97 @@
 <!DOCTYPE html>
 <html lang="ru">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TODO</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:wght@400;700&display=swap" rel="stylesheet">
+  <title>Поиск пользователя Telegram</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f0f2f5; margin: 0; }
+    .container { max-width: 500px; margin: 0 auto; background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    h2 { text-align: center; color: #0088cc; margin-bottom: 20px; }
+    input { padding: 14px; margin: 10px 0; width: 100%; box-sizing: border-box; font-size: 16px; border-radius: 12px; border: 1px solid #ddd; }
+    button { padding: 14px; width: 100%; background: #0088cc; color: white; border: none; border-radius: 12px; font-size: 16px; cursor: pointer; transition: 0.3s; }
+    button:hover { background: #006ba6; }
+    #result { margin-top: 25px; padding: 20px; border: 1px solid #ddd; border-radius: 12px; background: #fafafa; text-align: center; min-height: 120px; }
+    .error { color: #d32f2f; font-weight: bold; font-size: 18px; }
+    .avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #0088cc; margin-bottom: 15px; }
+    .info { font-size: 18px; line-height: 1.6; }
+    .loading { color: #0088cc; font-style: italic; }
+  </style>
 </head>
-
 <body>
-  <!-- планы -->
-  <h1>планы</h1>
-  <div class="plan-card">
-    <img src="pic/miko.jpg" alt="фон" class="plan-image">
-    <div class="plan-header">план на день</div>
-    <div class="plan-content">
-      <label class="custom-checkbox">
-        <input type="checkbox" class="checkbox-input">
-        <span class="label-text">сходить к врачу</span>
-      </label>
-      <label class="custom-checkbox">
-        <input type="checkbox" class="checkbox-input">
-        <span class="label-text">сходить к врачу</span>
-      </label>
-      <label class="custom-checkbox">
-        <input type="checkbox" class="checkbox-input">
-        <span class="label-text">сходить к врачу</span>
-      </label>
-    </div>
-  </div>
-  <!-- задачи-->
-  <div class="section-title">задачи</div>
-
-  <div class="plan-card">
-    <div class="plan-content tasks-list">
-      <label class="custom-checkbox">
-        <input type="checkbox" class="checkbox-input">
-        <span class="label-text">сходить к врачу</span>
-      </label>
-      <div class="task-subitem">• хлеб</div>
-      <div class="task-subitem">• молоко</div>
-      <div class="task-subitem">• колбаса</div>
-    </div>
-  </div>
+  <div class="container">
+    <h2>🔍 Поиск пользователя Telegram</h2>
+    <input type="text" id="username" placeholder="Введите @username или ID" />
+    <button onclick="searchUser()">Найти</button>
+    <div id="result"></div>
   </div>
 
-  <!--создание заметки-->
+  <script>
+    // ←←←←←←←←←←←←←←←← ИЗМЕНИ ЭТУ СТРОЧКУ НА САМЫЙ СВЕЖИЙ NGROK ←←←←←←←←←←←←←←←←
+    const API_BASE = "https://b276-50-7-249-66.ngrok-free.app"; // ← вставь новый из localhost:4041
 
-  <textarea class="name" name="name_plan" cols="30" rows="2"> </textarea>
-  
-  <input type=datetime-local name="datetime-local" placeholder="дата и время плана/задачи" size=30>
+    async function searchUser() {
+      const resultDiv = document.getElementById("result");
+      const username = document.getElementById("username").value.trim().replace(/^@/, "");
 
+      if (!username) {
+        resultDiv.innerHTML = '<p class="error">Введите username или ID</p>';
+        return;
+      }
 
+      resultDiv.innerHTML = '<p class="loading">Загрузка...</p>';
 
+      try {
+        const url = `${API_BASE}/tg/info/${encodeURIComponent(username)}`;
+        console.log("Запрос:", url);
 
+        const initData = window.Telegram?.WebApp?.initData || "";
+        console.log("initData length:", initData.length);
 
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "X-Telegram-Init-Data": initData
+          }
+        });
 
+        console.log("Статус:", response.status);
 
+        const text = await response.text(); // ← сначала берём как текст
+        console.log("Сырой ответ:", text.substring(0, 200) + "...");
 
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${text.substring(0, 100)}`);
+        }
 
+        const data = JSON.parse(text);
+        console.log("Данные:", data);
 
+        resultDiv.innerHTML = `
+          <img src="${data.avatar_url ? API_BASE + data.avatar_url : 'https://via.placeholder.com/100?text=😊'}" class="avatar" alt="Аватар">
+          <div class="info">
+            <h3>${data.first_name || '—'} ${data.last_name || ''}</h3>
+            <p><strong>Username:</strong> ${data.username ? '@' + data.username : 'нет'}</p>
+            <p><strong>ID:</strong> ${data.id}</p>
+          </div>
+        `;
+      } catch (err) {
+        console.error("Ошибка:", err);
+        resultDiv.innerHTML = `<p class="error">Ошибка: ${err.message}</p>`;
+      }
+    }
 
-  <!-- Нижняя панель навигации -->
-  <div class="bottom-nav">
-    <div class="nav-btn active"><img src="pic/home_negate_w_trans.png" alt="фон">
-    </div>
-    <div class="nav-btn">
-      <img src="pic/add_negate_w_trans.png" alt="фон">
-    </div>
-    <div class="nav-btn">
-      <img src="pic/profile_negate_w_trans.png" alt="фон">
-    </div>
-  </div>
-
+    // Автозапуск своего профиля
+    window.onload = () => {
+      const user = window.Telegram?.WebApp?.initDataUnsafe?.user;
+      if (user) {
+        document.getElementById("username").value = user.username || user.id;
+        searchUser();
+      } else {
+        document.getElementById("result").innerHTML = '<p class="error">Откройте приложение через Telegram</p>';
+      }
+    };
+  </script>
 </body>
-
 </html>
